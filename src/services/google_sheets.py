@@ -32,8 +32,10 @@ def get_google_sheets_service():
             try:
                 flow = InstalledAppFlow.from_client_secrets_file(
                     'credentials.json', SCOPES)
-                creds = flow.run_console(
-                    success_message='Autenticação concluída!'
+                creds = flow.run_local_server(
+                    port=0,
+                    success_message='Autenticação concluída!',
+                    open_browser=False
                 )
                 with open('token.pickle', 'wb') as token:
                     pickle.dump(creds, token)
