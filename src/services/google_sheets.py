@@ -1,7 +1,6 @@
 import os
 import pickle
 import logging
-import base64
 from datetime import datetime, timedelta
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -13,18 +12,7 @@ logger = logging.getLogger(__name__)
 
 def get_google_sheets_service():
     creds = None
-    
-    # Tenta ler o token do ambiente primeiro
-    token_base64 = os.environ.get('TOKEN_PICKLE')
-    if token_base64:
-        try:
-            token_bytes = base64.b64decode(token_base64)
-            creds = pickle.loads(token_bytes)
-        except Exception as e:
-            logger.error(f"Erro ao decodificar token do ambiente: {str(e)}")
-    
-    # Se não encontrou no ambiente, tenta ler do arquivo
-    if not creds and os.path.exists('token.pickle'):
+    if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
             creds = pickle.load(token)
     
@@ -35,16 +23,11 @@ def get_google_sheets_service():
             try:
                 flow = InstalledAppFlow.from_client_secrets_file(
                     'credentials.json', SCOPES)
-                creds = flow.run_console(
-                    success_message='Autenticação concluída!'
+                creds = flow.run_local_server(
+                    port=0,
+                    success_message='Autenticação concluída! Você pode fechar esta janela.',
+                    open_browser=True
                 )
-                # Salva o token em base64 para o ambiente
-                token_bytes = pickle.dumps(creds)
-                token_base64 = base64.b64encode(token_bytes).decode('utf-8')
-                logger.info("Token em base64 para o ambiente:")
-                logger.info(token_base64)
-                
-                # Também salva localmente
                 with open('token.pickle', 'wb') as token:
                     pickle.dump(creds, token)
             except Exception as e:
