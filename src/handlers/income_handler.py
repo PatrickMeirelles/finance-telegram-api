@@ -3,7 +3,7 @@ from datetime import datetime
 from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
 from src.utils.config import DESCRIPTION, CATEGORY, DATE, VALUE, NEW_CATEGORY
-from src.services.google_sheets import get_user_categories, add_category, save_income
+from src.services.database import get_user_categories, add_category, save_transaction
 
 logger = logging.getLogger(__name__)
 
@@ -124,7 +124,7 @@ async def value(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data['valor_total'] = total_value
         logger.info(f"Usuário {update.effective_user.id} informou valor: {total_value}")
 
-        if await save_income(update.effective_user.id, context.user_data):
+        if await save_transaction(update.effective_user.id, context.user_data, is_expense=False):
             await update.message.reply_text(
                 '✅ Receita registrada com sucesso!\n\n'
                 'Para adicionar outra receita, use o comando /receita\n'

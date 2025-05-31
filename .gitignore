@@ -26,6 +26,8 @@ wheels/
 *.egg
 __init__.py
 
+financial-telegram-api.pem
+
 # Arquivos de configuração e credenciais
 .env
 credentials.json

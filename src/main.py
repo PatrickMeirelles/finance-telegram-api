@@ -3,7 +3,7 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ConversationHandler
 from src.utils.config import TELEGRAM_BOT_TOKEN, DESCRIPTION, CATEGORY, DATE, PAYMENT_METHOD, INSTALLMENTS, VALUE, NEW_CATEGORY
 from src.handlers.expense_handler import add_expense, description, category, date, payment_method, installments, value
-from src.handlers.income_handler import add_income
+from src.handlers.income_handler import add_income, description as income_description, category as income_category, date as income_date, value as income_value
 from src.handlers.category_handler import new_category, save_category, list_categories
 
 # Configuração do logging
@@ -61,10 +61,10 @@ def main():
     income_handler = ConversationHandler(
         entry_points=[CommandHandler("receita", add_income)],
         states={
-            DESCRIPTION: [MessageHandler(filters.TEXT & ~filters.COMMAND, description)],
-            CATEGORY: [MessageHandler(filters.TEXT & ~filters.COMMAND, category)],
-            DATE: [MessageHandler(filters.TEXT & ~filters.COMMAND, date)],
-            VALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, value)],
+            DESCRIPTION: [MessageHandler(filters.TEXT & ~filters.COMMAND, income_description)],
+            CATEGORY: [MessageHandler(filters.TEXT & ~filters.COMMAND, income_category)],
+            DATE: [MessageHandler(filters.TEXT & ~filters.COMMAND, income_date)],
+            VALUE: [MessageHandler(filters.TEXT & ~filters.COMMAND, income_value)],
         },
         fallbacks=[CommandHandler("start", start)]
     )

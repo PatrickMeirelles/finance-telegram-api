@@ -2,7 +2,7 @@ import logging
 from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
 from src.utils.config import NEW_CATEGORY
-from src.services.google_sheets import get_user_categories, add_category
+from src.services.database import get_user_categories, add_category
 
 logger = logging.getLogger(__name__)
 

@@ -6,9 +6,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "python-telegram-bot",
-        "google-auth-oauthlib",
-        "google-auth-httplib2",
-        "google-api-python-client",
+        "asyncpg",
         "python-dotenv"
     ],
 ) 

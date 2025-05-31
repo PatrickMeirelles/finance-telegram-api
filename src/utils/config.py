@@ -6,12 +6,12 @@ load_dotenv()
 # Telegram Bot Token
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 
-# Google Sheets Configuration
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
-CATEGORIES_RANGE = 'Categorias!A:B'
-EXPENSES_RANGE = 'Despesas!A:H'
-INCOME_RANGE = 'Receitas!A:E'
+# Database Configuration
+DB_USER = os.getenv('DB_USER')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
+DB_NAME = os.getenv('DB_NAME')
+DB_HOST = os.getenv('DB_HOST')
+DB_PORT = os.getenv('DB_PORT')
 
 # Conversation States
 DESCRIPTION = 'DESCRIPTION'

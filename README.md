@@ -1,12 +1,12 @@
 # Bot Telegram - Gerenciador Financeiro
 
-Este é um bot do Telegram que ajuda a gerenciar suas finanças, registrando despesas e receitas em uma planilha do Google Sheets.
+Este é um bot do Telegram que ajuda a gerenciar suas finanças, registrando despesas e receitas em um banco de dados PostgreSQL.
 
 ## Requisitos
 
 - Python 3.7 ou superior
 - pip (gerenciador de pacotes Python)
-- Conta Google com acesso ao Google Sheets
+- PostgreSQL
 - Bot do Telegram criado através do @BotFather
 
 ## Instalação
@@ -24,29 +24,41 @@ pip install -r requirements.txt
 3. Crie um arquivo `.env` na raiz do projeto e adicione:
 ```
 TELEGRAM_BOT_TOKEN=seu_token_aqui
-SPREADSHEET_ID=id_da_sua_planilha
+DB_USER=seu_usuario
+DB_PASSWORD=sua_senha
+DB_NAME=nome_do_banco
+DB_HOST=localhost
+DB_PORT=5432
 ```
 
-4. Configure o Google Sheets:
-   - Acesse o [Google Cloud Console](https://console.cloud.google.com)
-   - Crie um novo projeto
-   - Ative a API do Google Sheets
-   - Crie credenciais OAuth 2.0
-   - Baixe o arquivo de credenciais e renomeie para `credentials.json`
-   - Coloque o arquivo `credentials.json` na raiz do projeto
-   - Crie uma planilha no Google Sheets e copie o ID da planilha (está na URL)
-   - Compartilhe a planilha com o email do serviço que você criou
+4. Configure o banco de dados PostgreSQL:
+   - Crie um banco de dados
+   - Execute os scripts SQL para criar as tabelas necessárias:
+     ```sql
+     CREATE TABLE categories (
+         id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+         "user" TEXT,
+         description TEXT,
+         created_at TEXT DEFAULT now(),
+         updated_at TEXT DEFAULT now()
+     );
 
-5. Estrutura da planilha:
-   - Crie uma aba chamada "Despesas"
-   - Configure as colunas na seguinte ordem:
-     - Descrição
-     - Categoria
-     - Data
-     - Método de Pagamento
-     - Parcela
-     - Valor Total
-     - Valor Parcela
+     CREATE TABLE transactions (
+         id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+         "user" TEXT,
+         description TEXT,
+         category_id INTEGER,
+         date DATE DEFAULT now(),
+         type_id INTEGER,
+         installments TEXT,
+         total_amount NUMERIC(20, 2),
+         amount_installment NUMERIC(20, 2),
+         created_at TEXT DEFAULT now(),
+         updated_at TEXT DEFAULT now(),
+         is_expense BOOLEAN DEFAULT true,
+         CONSTRAINT transactions_pkey PRIMARY KEY (id)
+     );
+     ```
 
 ## Uso
 
