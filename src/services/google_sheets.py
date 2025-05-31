@@ -13,20 +13,27 @@ logger = logging.getLogger(__name__)
 def get_google_sheets_service():
     creds = None
     if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
-            creds = pickle.load(token)
+        try:
+            with open('token.pickle', 'rb') as token:
+                creds = pickle.load(token)
+        except Exception as e:
+            logger.error(f"Erro ao carregar token: {str(e)}")
+            creds = None
     
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
+            try:
+                creds.refresh(Request())
+            except Exception as e:
+                logger.error(f"Erro ao atualizar token: {str(e)}")
+                creds = None
+        
+        if not creds:
             try:
                 flow = InstalledAppFlow.from_client_secrets_file(
                     'credentials.json', SCOPES)
-                creds = flow.run_local_server(
-                    port=0,
-                    success_message='Autenticação concluída! Você pode fechar esta janela.',
-                    open_browser=True
+                creds = flow.run_console(
+                    success_message='Autenticação concluída!'
                 )
                 with open('token.pickle', 'wb') as token:
                     pickle.dump(creds, token)
