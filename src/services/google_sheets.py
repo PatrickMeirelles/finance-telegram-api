@@ -16,6 +16,7 @@ def get_google_sheets_service():
         try:
             with open('token.pickle', 'rb') as token:
                 creds = pickle.load(token)
+                logger.info("Token carregado com sucesso do arquivo")
         except Exception as e:
             logger.error(f"Erro ao carregar token: {str(e)}")
             creds = None
@@ -23,22 +24,41 @@ def get_google_sheets_service():
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             try:
+                logger.info("Tentando atualizar token expirado")
                 creds.refresh(Request())
+                logger.info("Token atualizado com sucesso")
             except Exception as e:
                 logger.error(f"Erro ao atualizar token: {str(e)}")
                 creds = None
         
         if not creds:
             try:
+                logger.info("Iniciando novo fluxo de autenticação")
                 flow = InstalledAppFlow.from_client_secrets_file(
                     'credentials.json', SCOPES)
-                creds = flow.run_local_server(
-                    port=0,
-                    success_message='Autenticação concluída!',
-                    open_browser=False
+                
+                # Gera a URL de autorização
+                auth_url, _ = flow.authorization_url(
+                    access_type='offline',
+                    include_granted_scopes='true'
                 )
+                logger.info(f"URL de autorização gerada: {auth_url}")
+                
+                # Solicita o código de autorização
+                print("\nPor favor, acesse a URL abaixo e autorize o aplicativo:")
+                print(auth_url)
+                print("\nDepois de autorizar, copie o código de autorização e cole aqui:")
+                code = input("Código de autorização: ").strip()
+                
+                # Troca o código pelo token
+                flow.fetch_token(code=code)
+                creds = flow.credentials
+                
+                # Salva o token
                 with open('token.pickle', 'wb') as token:
                     pickle.dump(creds, token)
+                logger.info("Novo token gerado e salvo com sucesso")
+                
             except Exception as e:
                 logger.error(f"Erro durante a autenticação: {str(e)}")
                 raise
